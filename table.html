@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>localStorage</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+            text-align: center;
+            background-color: blanchedalmond;
+        }
+        table { width: 100%; margin-top: 20px; }
+        input, button { margin: 5px; padding: 8px; }
+    </style>
+</head>
+<body>
+    <input id="name" placeholder="Name">
+    <input id="age" placeholder="Age">
+    <input id="address" placeholder="Address">
+    <input id="email" placeholder="Email">
+    <button onclick="addData()">Add</button>
+    <table id="mytable">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </table>
+    <script>
+        let list = JSON.parse(localStorage.getItem("list")) || [];
+        function showData() {
+            let table = document.getElementById("mytable");
+            table.innerHTML = `<tr>
+                <th>Name</th><th>Age</th><th>Address</th><th>Email</th><th>Action</th>
+            </tr>` + list.map((item, index) => `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.age}</td>
+                    <td>${item.address}</td>
+                    <td>${item.email}</td>
+                    <td>
+                        <button onclick="editData(${index})">Edit</button>
+                        <button onclick="deleteData(${index})">Delete</button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+        function addData() {
+            let name = document.getElementById("name").value.trim();
+            let age = document.getElementById("age").value.trim();
+            let address = document.getElementById("address").value.trim();
+            let email = document.getElementById("email").value.trim();
+            if (!name || !age || !address || !email) return alert("All fields are required!");
+            list.push({ name, age, address, email });
+            localStorage.setItem("list", JSON.stringify(list));
+           
+            showData();
+        }
+        function deleteData(index) {
+            list.splice(index, 1);
+            localStorage.setItem("list", JSON.stringify(list));
+            showData();
+        }
+        function editData(index) {
+            document.getElementById("name").value = list[index].name;
+            document.getElementById("age").value = list[index].age;
+            document.getElementById("address").value = list[index].address;
+            document.getElementById("email").value = list[index].email;
+            list.splice(index, 1);
+            localStorage.setItem("list", JSON.stringify(list));
+            showData();
+        }
+        window.onload = showData;
+    </script>
+</body>
+</html>
